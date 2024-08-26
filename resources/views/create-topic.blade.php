@@ -1,16 +1,18 @@
 <x-main-layout title="Create topic"
     :scripts="[
+        //jquery is js for php
         'https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js',
         asset('js/create-topic.js')
     ]">
+    // route means it is calling a function pretty much
     <form method="POST" action="{{ route('submit-topic')}}">
-        @csrf
-        @method('POST')
+        @csrf //token for security reasons
+        @method('POST') //posting topics
         <label for="name">What's the title?</label>
         <input type="text" id="name" name="name" autocomplete="off"/>
 
         @error('name')
-            <span class="invalid-feedback" role="alert">
+            <span class="invalid-feedback" role="alert"> //span is a text field on the same line
                 <strong>{{ $message }}</strong>
             </span>
         @enderror

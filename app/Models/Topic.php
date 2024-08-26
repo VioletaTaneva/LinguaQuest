@@ -29,11 +29,13 @@ class Topic extends Model
 
     public function user(): BelongsTo
     {
+        //this topic belongs to one user
         return $this->belongsTo(User::class);
     }
 
     public function categories(): BelongsToMany
     {
+        //this topic has many categories
         return $this->belongsToMany(Category::class, 'topic_categories');
     }
 }

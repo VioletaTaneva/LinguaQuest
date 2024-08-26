@@ -12,9 +12,10 @@ use Illuminate\Support\Facades\Log;
 
 class TopicController extends Controller
 {
+    //making the topic view
     public function show($id) {
         try {
-            $topic = Topic::findOrFail($id);
+            $topic = Topic::findOrFail($id); 
 
             $author = DB::table('topics')
                     ->join('users', 'users.id', '=', 'topics.user_id')
@@ -40,6 +41,7 @@ class TopicController extends Controller
         }
     }
 
+    //show create form
     public function show_create() {
         $categories = DB::table('categories')
                         ->select('*')
@@ -50,6 +52,7 @@ class TopicController extends Controller
         return view('create-topic', ['categories' => $categories]);
     }
 
+    //create new topics
     public function create(Request $request) {
         $request->validate([
             'name' => 'required|string',
@@ -60,8 +63,8 @@ class TopicController extends Controller
         $categories = $request->get('categories');
         $user_id = Auth::user()->id;
         do {
-            $id = random_int(1001234, 2000000);
-        } while (Topic::find($id) !== null);
+            $id = random_int(1001234, 2000000); //random topic id
+        } while (Topic::find($id) !== null); //makes sure it doesn't already exist
 
         $new_topic = Topic::create([
             'id' => $id,
@@ -69,7 +72,7 @@ class TopicController extends Controller
             'name' => $name
         ]);
 
-        $new_topic->categories()->attach($categories);
+        $new_topic->categories()->attach($categories); //you attach the topic to the categories
 
         return redirect()->route('topic', ['id' => $id]);
     }

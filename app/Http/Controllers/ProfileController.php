@@ -18,9 +18,10 @@ class ProfileController extends Controller
         try {
             $user = User::where('username', $username)->firstOrFail();
 
-            $now = Carbon::now();
-            $user_creation = Carbon::parse($user->created_on);
+            $now = Carbon::now(); //libraly for time
+            $user_creation = Carbon::parse($user->created_on); 
 
+            //makes time more readable
             $diff = $user_creation->diffForHumans($now, true);
 
             return view('profile', ['user' => $user, 'diff' => $diff]);
@@ -60,6 +61,7 @@ class ProfileController extends Controller
         return view('edit-profile', ['countries' => $countries]);
     }
 
+    //profile edit
     public function save(Request $request, $username) {
         $user = User::where('username', $username)->firstOrFail();
 
@@ -73,6 +75,7 @@ class ProfileController extends Controller
             'photo' => ['sometimes', 'mimes:jpg,jpeg,png', 'max:20480'],
         ]);
 
+        // crop image
         if (request()->hasFile('photo')) {
             $manager = new ImageManager(new Driver([]));
             $image = $manager->read(request()->file('photo'));
@@ -100,10 +103,12 @@ class ProfileController extends Controller
         return redirect()->route('view-profile', ['username' => Auth::user()->username]);
     }
 
+    //profile ban
     public function ban($username) {
         try {
             $user = User::where('username', $username)->firstOrFail();
 
+            //0 = false 1 = correct
             if($user->is_banned != 1) {
                 $user->is_banned = 1;
                 $user->save();
@@ -112,12 +117,14 @@ class ProfileController extends Controller
                 return redirect()->back()->with('error', 'User is already banned!');
             }
 
-            return redirect()->back();
+            return redirect()->back(); // when the ban is done
+            //error
         } catch (ModelNotFoundException $e) {
             return response()->view('errors.404', ['message' => 'User \''. $username. '\' not found.'], 404);
         }
     }
 
+    //profile unban
     public function unban($username) {
         try {
             $user = User::where('username', $username)->firstOrFail();

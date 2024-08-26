@@ -49,8 +49,10 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
+    // $data = $request / validator = checker
     protected function validator(array $data)
     {
+        // returns a boolean if the generation passed or not
         return Validator::make($data, [
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
@@ -72,19 +74,20 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $path = 'avatars/default.png';
-
+ 
+        // crop image
         if (request()->hasFile('photo')) {
             $manager = new ImageManager(new Driver([]));
             $image = $manager->read(request()->file('photo'));
-            $size = min($image->width(), $image->height());
+            $size = min($image->width(), $image->height()); // gets the smaller side of the image so in can be a square
             $image->crop($size, $size, position: 'center');
 
             $extension = request()->file('photo')->getClientOriginalExtension();
-            $path = 'avatars/' . time() . '_' . Str::random(40) . '.' . $extension;
+            $path = 'avatars/' . time() . '_' . Str::random(40) . '.' . $extension; //gives the img a unique name
 
             $image->save(public_path($path));
         }
-
+        // we create a user row in the table
         return User::create([
             'first_name' => $data['first_name'],
             'middle_name' => $data['middle_name'],

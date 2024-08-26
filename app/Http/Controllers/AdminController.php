@@ -16,31 +16,35 @@ class AdminController extends Controller
     }
 
     public function monthlyPosts() {
+        // gets a year worth of months
         $months = [];
         for ($i = 11; $i >= 0; $i--) {
             $months[] = Carbon::now()->subMonths($i)->format('F Y');
         }
 
+        // posts created in the last 12 months
         $results = DB::table('posts')
-                    ->select(
-                        DB::raw("DATE_FORMAT(created_on, '%M %Y') AS month"),
-                        DB::raw('COUNT(*) AS post_count')
+                    ->select( 
+                        DB::raw("DATE_FORMAT(created_on, '%M %Y') AS month"), //when the post is created
+                        DB::raw('COUNT(*) AS post_count') //counts the number of posts
                     )
                     ->whereBetween('created_on', [Carbon::now()->subMonths(11)->startOfDay(), Carbon::now()->endOfDay()])  // Filter by the current year
                     ->groupBy(DB::raw("DATE_FORMAT(created_on, '%M %Y')"))
                     ->orderBy('created_on')
                     ->get()
-                    ->keyBy('month')
+                    ->keyBy('month') 
                     ->toArray();
 
-        $labels = [];
-        $data = [];
+        $labels = []; // the names of the date under the charts
+        $data = []; // the date inside the charts
 
         foreach ($months as $month) {
             $labels[] = $month;
+            // shows the months with no activity / isset makes sure all the months are shown
             $data[] = isset($results[$month]) ? $results[$month]->post_count : 0;
         }
 
+        // builds the chart
         $monthlyPosts = Chartjs::build()
         ->name("post_monthly")
         ->type("line")
@@ -63,7 +67,7 @@ class AdminController extends Controller
             ]
         ]);
 
-        return compact("monthlyPosts");
+        return compact("monthlyPosts"); 
     }
 
     public function weeklyPosts() {

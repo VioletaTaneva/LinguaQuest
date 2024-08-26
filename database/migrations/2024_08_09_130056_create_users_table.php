@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Create users table 
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
@@ -24,13 +25,14 @@ return new class extends Migration
             $table->boolean('is_admin')->default(0);
             $table->boolean('is_banned')->default(0);
             $table->string('photo')->default('');
-            $table->timestamp('created_on')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('created_on')->default(DB::raw('CURRENT_TIMESTAMP')); //DB: raw uses SQL script
         });
     }
 
     /**
      * Reverse the migrations.
      */
+    // if the table exists, delete it and restart it again so you dont have repeating info from the seeders
     public function down(): void
     {
         Schema::dropIfExists('users');

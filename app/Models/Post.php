@@ -18,6 +18,7 @@ class Post extends Model
         'topic_id'
     ];
 
+    //gives a format to follow
     protected $casts = [
         'created_on' => 'datetime',
     ];

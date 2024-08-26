@@ -13,6 +13,7 @@ class AdminCheck
 {
     public function handle(Request $request, Closure $next)
     {
+        //makes sure user exist and is admin
         if (Auth::check() && Auth::user()->is_admin == 1) {
             return $next($request);
         }

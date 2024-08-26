@@ -13,7 +13,7 @@ use App\Models\Like;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-    public $timestamps = false;
+    public $timestamps = false; //prevent Laravel from adding created_at and updated_at columns
 
     protected $fillable = [
         'first_name',
